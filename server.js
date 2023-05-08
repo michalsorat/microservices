@@ -6,8 +6,8 @@ import dateFormat from "dateformat";
 const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout: 10000 };
 const client = new Client(config);
 
-var db = mysql.createConnection({
-    host: "localhost",
+const db = mysql.createConnection({
+    host: "127.0.0.1",
     user: "root",
     database: "sellphone"
 })
@@ -36,7 +36,6 @@ client.subscribe("customer-data", async function ({ task, taskService }) {
     date = dateFormat(date, "yyyy-mm-dd HH:MM:ss");
 
     var query = `INSERT INTO orders (user_id, name, last_name, email, street, street_nr, city, psc, status, created_at, updated_at) VALUES (${userId}, '${name}', '${lastName}', '${email}', '${street}', '${streetNr}', '${city}', '${psc}', '${status}', '${date}', '${date}')`;
-    var insertId;
 
     if (name != null && lastName != null && email != null && street != null && streetNr != null && city != null && psc != null && status != null) {
         db.query(query, function (error, result) {
@@ -53,26 +52,29 @@ client.subscribe("transport-options", async function ({ task, taskService }) {
     // if (transport != "Osobný odber" && transport != "Doručenie na adresu") {
     //     throw "Transport method is not valid!"
     // }
+    const query = `UPDATE orders SET transport_name = '${transport}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
-    var query = `UPDATE orders\
-    SET transport_name = '${transport}' \
-    WHERE id = (\
-      SELECT id FROM orders\
-      ORDER BY created_at DESC\
-      LIMIT 1\
-    ))`;
     db.query(query, function (error, result) {
-        console.log(result);
+        if (error) throw error;
+        console.log("Transport data saved.");
     });
 
-    await taskService.complete(task, { variables: {} });
+    await taskService.complete(task);
 });
 
 client.subscribe("payment-options", async function ({ task, taskService }) {
-    // console.log("payment");
+    const payment = task.variables.get("payment_name");
+    // if (transport != "Osobný odber" && transport != "Doručenie na adresu") {
+    //     throw "Transport method is not valid!"
+    // }
+    const query = `UPDATE orders SET payment_name = '${payment}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
+    db.query(query, function (error, result) {
+        if (error) throw error;
+        console.log("Payment data saved.");
+    });
 
-    await taskService.complete(task, { variables: {} });
+    await taskService.complete(task);
 });
 
 app.get("/transports", function (req, res) {
