@@ -49,9 +49,6 @@ client.subscribe("customer-data", async function ({ task, taskService }) {
 
 client.subscribe("transport-options", async function ({ task, taskService }) {
     const transport = task.variables.get("transport_name");
-    // if (transport != "Osobný odber" && transport != "Doručenie na adresu") {
-    //     throw "Transport method is not valid!"
-    // }
     const query = `UPDATE orders SET transport_name = '${transport}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
     db.query(query, function (error, result) {
@@ -64,9 +61,6 @@ client.subscribe("transport-options", async function ({ task, taskService }) {
 
 client.subscribe("payment-options", async function ({ task, taskService }) {
     const payment = task.variables.get("payment_name");
-    // if (transport != "Osobný odber" && transport != "Doručenie na adresu") {
-    //     throw "Transport method is not valid!"
-    // }
     const query = `UPDATE orders SET payment_name = '${payment}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
     db.query(query, function (error, result) {

@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "start-kafka": "nodemon kafka_server.js",
+    "start-kafka-consumer": "nodemon consumer.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
     "camunda-external-task-client-js": "^3.0.0",
     "dateformat": "^5.0.3",
     "express": "^4.18.2",
+    "kafkajs": "^2.2.4",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
