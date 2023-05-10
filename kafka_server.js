@@ -77,13 +77,11 @@ const setPaymentOption = async (message) => {
 }
 
 const triggerProcess = async (topic, data) => {
-    await producer.connect();
     await producer.send({
         topic,
-        messages: [{ value: data }]
+        messages: [{ value: data, partition: 0 }]
     });
     console.log(`Triggered topic: ${topic}`);
-    await producer.disconnect();
 };
 
 const executeProcesses = async (topics) => {
@@ -94,14 +92,15 @@ const executeProcesses = async (topics) => {
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
+            console.log("Topic that came -> ", topic)
             if (topic === "customer-data") {
-                console.log(`Subscribed topic: ${topic}`);
+                // console.log(`Subscribed topic: ${topic}`);
                 await setUserData(message);
             } else if (topic === "transport-options") {
-                console.log(`Subscribed topic: ${topic}`);
+                // console.log(`Subscribed topic: ${topic}`);
                 await setTransportOption(message);
             } else if (topic === "payment-options") {
-                console.log(`Subscribed topic: ${topic}`);
+                // console.log(`Subscribed topic: ${topic}`);
                 await setPaymentOption(message);
             }
         },
@@ -109,15 +108,15 @@ const executeProcesses = async (topics) => {
 };
 
 app.post("/trigger-kafka-process", async (req, res) => {
-    // Start consuming messages before sending them
-    await executeProcesses(["customer-data", "transport-options", "payment-options"]);
-
     try {
         req.on("data", async function (data) {
             const reqBody = JSON.parse(data);
+            await producer.connect();
+
             await triggerProcess("customer-data", JSON.stringify(reqBody));
             await triggerProcess("transport-options", JSON.stringify(reqBody));
             await triggerProcess("payment-options", JSON.stringify(reqBody));
+
             await producer.disconnect();
 
             res.status(200).json({ message: "Processes triggered successfully" });
@@ -131,3 +130,5 @@ app.post("/trigger-kafka-process", async (req, res) => {
 app.listen(PORT, function () {
     console.log(`Kafka server listening on port: ${PORT}`);
 });
+
+await executeProcesses(["customer-data", "transport-options", "payment-options"]);
