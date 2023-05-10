@@ -18,24 +18,24 @@ db.connect(function (err) {
 })
 
 client.subscribe("customer-data", async function ({ task, taskService }) {
-    var userId = task.variables.get("user_id");
-    var name = task.variables.get("name");
-    var lastName = task.variables.get("last_name");
-    var email = task.variables.get("email");
-    var street = task.variables.get("street");
-    var streetNr = task.variables.get("street_nr");
-    var city = task.variables.get("city");
-    var psc = task.variables.get("psc");
-    var status = task.variables.get("status");
+    let userId = task.variables.get("user_id");
+    const name = task.variables.get("name");
+    const lastName = task.variables.get("last_name");
+    const email = task.variables.get("email");
+    const street = task.variables.get("street");
+    const streetNr = task.variables.get("street_nr");
+    const city = task.variables.get("city");
+    const psc = task.variables.get("psc");
+    const status = task.variables.get("status");
 
     if (userId == null) {
         userId = 0;
     }
 
-    var date = new Date();
+    let date = new Date();
     date = dateFormat(date, "yyyy-mm-dd HH:MM:ss");
 
-    var query = `INSERT INTO orders (user_id, name, last_name, email, street, street_nr, city, psc, status, created_at, updated_at) VALUES (${userId}, '${name}', '${lastName}', '${email}', '${street}', '${streetNr}', '${city}', '${psc}', '${status}', '${date}', '${date}')`;
+    const query = `INSERT INTO orders (user_id, name, last_name, email, street, street_nr, city, psc, status, created_at, updated_at) VALUES (${userId}, '${name}', '${lastName}', '${email}', '${street}', '${streetNr}', '${city}', '${psc}', '${status}', '${date}', '${date}')`;
 
     if (name != null && lastName != null && email != null && street != null && streetNr != null && city != null && psc != null && status != null) {
         db.query(query, function (error, result) {
@@ -51,7 +51,7 @@ client.subscribe("transport-options", async function ({ task, taskService }) {
     const transport = task.variables.get("transport_name");
     const query = `UPDATE orders SET transport_name = '${transport}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
-    db.query(query, function (error, result) {
+    db.query(query, function (error) {
         if (error) throw error;
         console.log("Transport data saved.");
     });
@@ -63,7 +63,7 @@ client.subscribe("payment-options", async function ({ task, taskService }) {
     const payment = task.variables.get("payment_name");
     const query = `UPDATE orders SET payment_name = '${payment}' WHERE id = (SELECT id FROM orders ORDER BY created_at DESC LIMIT 1)`;
 
-    db.query(query, function (error, result) {
+    db.query(query, function (error) {
         if (error) throw error;
         console.log("Payment data saved.");
     });

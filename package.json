@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon server.js",
-    "start-kafka": "nodemon kafka_server.js",
-    "start-kafka-consumer": "nodemon consumer.js"
+    "start-kafka": "nodemon kafka_server.js"
   },
   "keywords": [],
   "author": "",
