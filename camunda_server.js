@@ -1,8 +1,9 @@
 import express from "express"
-const app = express();
 import { Client, logger, Variables } from "camunda-external-task-client-js";
 import mysql from "mysql";
 import dateFormat from "dateformat";
+const app = express();
+const PORT = 3000;
 const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout: 10000 };
 const client = new Client(config);
 
@@ -118,6 +119,6 @@ app.get("/user-details", function (req, res) {
     res.status(200).send(users[0]);
 });
 
-app.listen(3000, function () {
-    console.log("Microservice listening on port 3000");
+app.listen(PORT, function () {
+    console.log(`Camunda and microservices server listening on port ${PORT}`);
 });
