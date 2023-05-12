@@ -92,15 +92,12 @@ const executeProcesses = async (topics) => {
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-            console.log("Topic that came -> ", topic)
+            console.log(`Consumer received topic: ${topic}`);
             if (topic === "customer-data") {
-                // console.log(`Subscribed topic: ${topic}`);
                 await setUserData(message);
             } else if (topic === "transport-options") {
-                // console.log(`Subscribed topic: ${topic}`);
                 await setTransportOption(message);
             } else if (topic === "payment-options") {
-                // console.log(`Subscribed topic: ${topic}`);
                 await setPaymentOption(message);
             }
         },

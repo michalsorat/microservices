@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon camunda_server.js",
     "start-kafka": "nodemon kafka_server.js"
   },
   "keywords": [],
